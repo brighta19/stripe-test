@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Stripe Test</title>
+    <link rel="stylesheet" href="/assets/css/style.css">
+</head>
+<body>
+    <h1>Stripe JS v3 without Elements (also works with Stripe JS v2)</h1>
+    <form name="myForm" id="payment-info" action="/v3/" method="POST">
+        <p id="status"></p>
+
+        <label for="one-time">One-Time Payment</label>
+        <input type="radio" id="one-time" name="paytype" value="one-time" checked>
+        <label for="recurring">Recurring Payment</label>
+        <input type="radio" id="recurring" name="paytype" value="recurring">
+        <br>
+
+        <label for="number">Credit Card Number</label>
+        <input type="number" name="number" id="credit-card-number" value="4242424242424242">
+        <br>
+
+        <label for="address_zip">Zip code</label>
+        <input type="number" name="address_zip" id="zip-code" value="10844">
+        <br>
+
+        <label for="expdate">Expiration</label>
+        <input type="number" name="exp_month" id="expiration-date-month" placeholder="mm" value="11">
+        <input type="number" name="exp_year" id="expiration-date-year" placeholder="yyyy" value="2029">
+        <br>
+
+        <label for="cvc">Security code</label>
+        <input type="number" name="cvc" id="security-code" value="434">
+        <br>
+
+        <input type="submit" value="Submit">
+    </form>
+
+    <script src="https://js.stripe.com/v3/"></script>
+    <script src="/assets/js/v3.js"></script>
+</body>
+</html>
