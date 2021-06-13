@@ -2,7 +2,7 @@ let status = document.querySelector("#status");
 let form = document.forms["myForm"];
 
 // Sample test API key from Stripe Docs
-let stripe = Stripe("pk_test_TYooMQauvdEDq54NiTphI7jx");
+// let stripe = Stripe("pk_test_TYooMQauvdEDq54NiTphI7jx");
 
 form.onsubmit = e => {
     e.preventDefault();
