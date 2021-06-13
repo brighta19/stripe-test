@@ -40,7 +40,12 @@ app.post("/v3/", jsonParser, async (req, res) => {
         // Create a PaymentMethod with received card info (using PaymentMethods API)
         let paymentMethod = await stripe.paymentMethods.create({
             type: "card",
-            card: req.body.card
+            card: req.body.card,
+            billing_details: {
+                address: {
+                    postal_code: req.body.address_zip
+                }
+            }
         });
 
         // Charge using PaymentIntents API

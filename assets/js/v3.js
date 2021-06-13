@@ -25,7 +25,8 @@ form.onsubmit = e => {
         },
         body: JSON.stringify({
             paytype: form["paytype"].value,
-            card
+            address_zip: form["address_zip"].value,
+            card,
         })
     })
     .then(res => res.json())
