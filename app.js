@@ -3,7 +3,7 @@ const bodyParser = require("body-parser");
 // Sample test API key from Stripe Docs
 const stripe = require("stripe")("sk_test_4eC39HqLyjWDarjtT1zdp7dc");
 const app = express();
-const PORT = 4000;
+const PORT = process.env.PORT || 4000;
 
 let jsonParser = bodyParser.json();
 let urlencodedParser = bodyParser.urlencoded({ extended: false });
