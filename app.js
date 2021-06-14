@@ -16,8 +16,8 @@ app.listen(PORT, () => {
 
 
 
-// Makeshift way of creating a Stripe Product and Price (required for Subscriptions)
-let organizationProduct, subscriptionPrice;
+// Makeshift way of creating a Stripe Product and Price/Plan (required for Subscriptions)
+let organizationProduct, subscriptionPrice, subscriptionPlan;
 (async function () {
     organizationProduct = await stripe.products.create({
         name: 'TGF Organization',
@@ -26,6 +26,12 @@ let organizationProduct, subscriptionPrice;
         unit_amount: 2_00,
         currency: 'usd',
         recurring: {interval: 'month'},
+        product: organizationProduct.id,
+    });
+    subscriptionPlan = await stripe.plans.create({
+        amount: 2_00,
+        currency: 'usd',
+        interval: 'month',
         product: organizationProduct.id,
     });
 })()
@@ -37,7 +43,7 @@ app.post("/v3/", jsonParser, async (req, res) => {
     console.log("💳 Processing...");
 
     try {
-        // Create a PaymentMethod with received card info (using PaymentMethods API)
+        // Create a PaymentMethod with received card info
         let paymentMethod = await stripe.paymentMethods.create({
             type: "card",
             card: req.body.card,
@@ -48,7 +54,7 @@ app.post("/v3/", jsonParser, async (req, res) => {
             }
         });
 
-        // Charge using PaymentIntents API
+        // Charge using PaymentIntents (using a PaymentMethod)
         if (req.body.paytype === "one-time") {
             await stripe.paymentIntents.create({
                 amount: 90_00,
@@ -59,7 +65,7 @@ app.post("/v3/", jsonParser, async (req, res) => {
             
             console.log("✅ Payment successful!");
         }
-        // Create a Subscription (using Subscriptions API)
+        // Create a Subscription with a Price
         else {
             let customer = await stripe.customers.create({
                 payment_method: paymentMethod.id
@@ -91,7 +97,7 @@ app.post("/v2/", urlencodedParser, async (req, res) => {
     console.log("💳 Processing...");
 
     try {
-        // Charge using Charges API
+        // Charge using given Token
         if (req.body.paytype === "one-time") {
             await stripe.charges.create({
                 amount: 90_00,
@@ -101,7 +107,7 @@ app.post("/v2/", urlencodedParser, async (req, res) => {
             
             console.log("✅ Payment successful!");
         }
-        // Create a Subscription (using Subscriptions API)
+        // Create a Subscription with a Plan
         else {
             let customer = await stripe.customers.create({
                 source: req.body.cc_token_id
@@ -109,7 +115,7 @@ app.post("/v2/", urlencodedParser, async (req, res) => {
 
             await stripe.subscriptions.create({
                 customer: customer.id,
-                items: [{ price: subscriptionPrice.id }]
+                plan: subscriptionPlan.id
             });
 
             console.log("🧑 Set subscription for customer!");
@@ -120,7 +126,7 @@ app.post("/v2/", urlencodedParser, async (req, res) => {
     }
     // 
     catch (e) {
-        // Rerender page with error
+        // Rerender page with error, not suggested (customer loses inputted card info on frontend)
         console.log("❌ Failure: " + e.code);
         res.render("v2/index.ejs", { error: e.code });
     }
